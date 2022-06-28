@@ -229,7 +229,7 @@ int main(void)
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
-	sprintf(date,"Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
+	sprintf(date,"Date: %02d.%02d.%02d \t" ,sDate.Date,sDate.Month,sDate.Year);
 	sprintf(time,"Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
 	DebugSerialOutput(date);
 	DebugSerialOutput(time);
@@ -625,35 +625,44 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 size_t DebugSerialOutput(const char *message) {
-  static const size_t USART1_TIMEOUT = 250;
-  size_t result = 0;
 
-  HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t *)message, strlen(message), USART1_TIMEOUT);
-  if (HAL_OK == status) {
-        result = sizeof(message);
-  } else {
-    result = 0;
-  }
+	// print to UART easily
 
-  return result;
+	static const size_t USART1_TIMEOUT = 250;
+	size_t result = 0;
+
+	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t *)message, strlen(message), USART1_TIMEOUT);
+	if (HAL_OK == status) {
+		result = sizeof(message);
+	} else {
+		result = 0;
+	}
+
+	return result;
 }
 
 int8_t bme680I2cRead(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
-  int8_t result;
-  static const size_t I2C_READ_TIMEOUT = 250;
 
-  if (HAL_I2C_Master_Transmit(&hi2c1, (dev_id << 1), &reg_addr, 1, I2C_READ_TIMEOUT) != HAL_OK) {
-    result = -1;
-  } else if (HAL_I2C_Master_Receive (&hi2c1, (dev_id << 1) | 0x01, reg_data, len, I2C_READ_TIMEOUT) != HAL_OK) {
-    result = -1;
-  } else {
-    result = 0;
-  }
+	// read I2C line
 
-  return result;
+	int8_t result;
+	static const size_t I2C_READ_TIMEOUT = 250;
+
+	if (HAL_I2C_Master_Transmit(&hi2c1, (dev_id << 1), &reg_addr, 1, I2C_READ_TIMEOUT) != HAL_OK) {
+		result = -1;
+	} else if (HAL_I2C_Master_Receive (&hi2c1, (dev_id << 1) | 0x01, reg_data, len, I2C_READ_TIMEOUT) != HAL_OK) {
+		result = -1;
+	} else {
+		result = 0;
+	}
+
+	return result;
+
 }
 
 int8_t bme680I2cWrite(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
+
+  // write to I2C line
   int8_t result;
   int8_t *buf;
 
@@ -736,9 +745,9 @@ void bme680TakeSample(char i2c_reading_buf[100], int8_t rslt, struct bme680_fiel
 	// Query the sample data
 	rslt = bme680_get_sensor_data(&data, &gas_sensor);
 
-	// Format results into a human readable string
+	// Format results into a readable string
 	sprintf(i2c_reading_buf,
-	  "T: %u.%u degC, P: %u.%u hPa, H: %u.%u %%rH\r\n",
+	  "Temp: %u.%u degC, Pres: %u.%u hPa, Humi: %u.%u %%rH\r\n",
 	  (unsigned int)data.temperature / 100,
 	  (unsigned int)data.temperature % 100,
 	  (unsigned int)data.pressure / 100,
@@ -761,13 +770,13 @@ void bme680TakeSample(char i2c_reading_buf[100], int8_t rslt, struct bme680_fiel
 void getWindDir(void) {
 
 	//------------------------Take Sample Using weather vane ADC ---------------------------
-	// 5V = 4095, 0V = (50) 0
 	// init variables
     uint16_t raw;
     char msg[80];
     int numDirs = 7;
     int inIf = 0;
-    uint16_t vMin[] = {2500, 940, 160, 310, 500, 1580, 4080, 3600};
+    // digital voltage values and the directions they correspond to
+    uint16_t vMin[] = {2500, 940, 160, 310, 500, 1580, 4080, 3600};  	// 5V = 4095, 0V = (50) 0
     uint16_t vMax[] = {2700, 990, 190, 340, 540, 1620, 4100, 3650};
     char* windDir[] = {"North","North East","East","South East","South","South West","West","North West"};
 
@@ -786,6 +795,7 @@ void getWindDir(void) {
 		}//if
 	} //for
 
+	// during rapid wind direction change voltage can fall out of range of values. failsafe.
 	if(!inIf) {
 		sprintf(msg, "The wind direction is changing rapidly \r\n");
 		DebugSerialOutput(msg);
@@ -797,11 +807,13 @@ void getWindDir(void) {
 
 int getRainfall(int rainTips) {
 
+	// interrupt function. Increments every reed closure. twice per tip (debounce)
 	rainTips++;
 
 	char rainfallMsg[80];
 	rainFallInMM = rainTips*0.1397; //2791 per tip, 2x due to debounce
 
+	// only print once every tip, again accounting for debounce
 	if(rainTips % 2 == 0) {
 		sprintf(rainfallMsg, "Rainfall since program start: %f mm \r\n", rainFallInMM);
 		DebugSerialOutput(rainfallMsg);
@@ -813,16 +825,20 @@ int getRainfall(int rainTips) {
 
 void getWindSpeed() {
 
-	// wind speed vars
+	// interrupt function. Increments every reed closure. ~3 times in a full rotation
 	windTips++;
 
 } // getWindSpeed function
 
 void printWindSpeed() {
 
+	// hold uart msg
 	char windMsg[80];
 
+	// calculate a store windspeed taken over 5 sec period
 	windValues[windCounts++] = windTips*2.4/5;
+
+	// reset array index if filled. for purposes of averaging
 	if(windCounts > 60) {
 		windCounts = 0;
 	}
@@ -833,6 +849,7 @@ void printWindSpeed() {
 	sprintf(windMsg, "Wind speed over 5 seconds: %f \r\n", windValues[windCounts-1]);
 	DebugSerialOutput(windMsg);
 
+	// find and report average windspeed
 	float avgWindSpeed = 0.0;
 	for(int i = 0; i<60; i++) {
 		avgWindSpeed += windValues[i];
