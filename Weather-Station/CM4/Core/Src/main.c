@@ -248,12 +248,7 @@ int main(void)
 
 	//------GPIO RAIN START-----------
 	// done via interrupts
-	if(rainFallInMM != 0) {
-		sprintf(countMsg, "Rainfall since program start: %f mm \r\n", rainFallInMM-0.1397);
-	}
-	else {
-		sprintf(countMsg, "Rainfall since program start: %f mm \r\n", rainFallInMM);
-	}
+	sprintf(countMsg, "Rainfall since program start: %f mm \r\n", rainFallInMM);
 	DebugSerialOutput(countMsg);
 	//------GPIO RAIN END-------------
 
@@ -776,8 +771,8 @@ void getWindDir(void) {
     int numDirs = 7;
     int inIf = 0;
     // digital voltage values and the directions they correspond to
-    uint16_t vMin[] = {2500, 940, 160, 310, 500, 1580, 4080, 3600};  	// 5V = 4095, 0V = (50) 0
-    uint16_t vMax[] = {2700, 990, 190, 340, 540, 1620, 4100, 3650};
+    uint16_t vMin[] = {1660, 625, 120, 220, 330, 1045, 2860, 2300};  	// 5V = 4095, 0V = (50) 0
+    uint16_t vMax[] = {1700, 670, 160, 260, 380, 1080, 2890, 2355};
     char* windDir[] = {"North","North East","East","South East","South","South West","West","North West"};
 
     // poll the ADC for its value, that value corresponds to a direction
@@ -788,7 +783,7 @@ void getWindDir(void) {
 	// check that direction, print it to serial
 	for(int i=0; i<=numDirs; i++) {
 		if(raw >= vMin[i] && raw <= vMax[i]) {
-			sprintf(msg, "The wind is blowing %s\r\n", windDir[i]);
+			sprintf(msg, "The wind is blowing %s \r\n", windDir[i]);
 			DebugSerialOutput(msg);
 			inIf = 1;
 			break;
@@ -836,15 +831,15 @@ void printWindSpeed() {
 	char windMsg[80];
 
 	// calculate a store windspeed taken over 5 sec period
-	windValues[windCounts++] = windTips*2.4/5;
+	windValues[windCounts++] = windTips*2.4/5/3;
 
 	// reset array index if filled. for purposes of averaging
 	if(windCounts > 60) {
 		windCounts = 0;
 	}
 
-	sprintf(windMsg, "Full spins in 5 seconds: %u \r\n", windTips);
-	DebugSerialOutput(windMsg);
+	//sprintf(windMsg, "Full spins in 5 seconds: %u \r\n", windTips/3);
+	//DebugSerialOutput(windMsg);
 
 	sprintf(windMsg, "Wind speed over 5 seconds: %f \r\n", windValues[windCounts-1]);
 	DebugSerialOutput(windMsg);
