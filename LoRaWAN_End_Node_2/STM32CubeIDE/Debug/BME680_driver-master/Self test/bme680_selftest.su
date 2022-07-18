@@ -1,0 +1,2 @@
+../BME680_driver-master/Self test/bme680_selftest.c:147:15:analyze_sensor_data	0	static
+../BME680_driver-master/Self test/bme680_selftest.c:75:8:bme680_self_test	232	static

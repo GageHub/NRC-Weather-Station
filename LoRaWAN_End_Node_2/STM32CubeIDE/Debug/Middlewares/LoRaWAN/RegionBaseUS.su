@@ -1,0 +1,4 @@
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:48:24:FindAvailable125kHzChannels	0	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:74:17:RegionBaseUSComputeNext125kHzJoinChannel	40	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:135:6:RegionBaseUSVerifyFrequencyGroup	0	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:146:10:RegionBaseUSCalcDownlinkFrequency	0	static

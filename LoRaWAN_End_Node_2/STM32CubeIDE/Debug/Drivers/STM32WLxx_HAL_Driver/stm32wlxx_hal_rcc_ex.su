@@ -1,0 +1,15 @@
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1115:17:RCC_PLL_GetFreqDomain_P	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1165:17:RCC_PLL_GetFreqDomain_Q	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:113:19:HAL_RCCEx_PeriphCLKConfig	16	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:345:6:HAL_RCCEx_GetPeriphCLKConfig	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:416:10:HAL_RCCEx_GetPeriphCLKFreq	8	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:928:6:HAL_RCCEx_WakeUpStopCLKConfig	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:942:6:HAL_RCCEx_EnableLSECSS	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:952:6:HAL_RCCEx_DisableLSECSS	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:968:6:HAL_RCCEx_EnableLSECSS_IT	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1003:13:HAL_RCCEx_LSECSS_Callback	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:988:6:HAL_RCCEx_LSECSS_IRQHandler	8	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1018:6:HAL_RCCEx_EnableLSCO	32	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1056:6:HAL_RCCEx_DisableLSCO	8	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1083:6:HAL_RCCEx_EnableMSIPLLMode	0	static
+C:/Drivers/STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c:1093:6:HAL_RCCEx_DisableMSIPLLMode	0	static

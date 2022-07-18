@@ -1,0 +1,10 @@
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:342:8:bme680I2cRead	32	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:361:8:bme680I2cWrite	40	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:382:5:bme680Init	24	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:203:9:EnvSensors_Init	288	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:436:6:bme680TakeSample	48	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:162:9:EnvSensors_Read	136	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:472:6:getWindDir	72	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:510:5:getRainfall	0	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:528:6:getWindSpeed	0	static
+C:/Users/dumbt/OneDrive/Desktop/LoRaWAN_End_Node_2/Core/Src/sys_sensors.c:535:6:printWindSpeed	0	static
