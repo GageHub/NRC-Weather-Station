@@ -1,0 +1,15 @@
+../BME680_driver-master/bme680.c:1345:15:null_ptr_check	0	static
+../BME680_driver-master/bme680.c:1256:15:set_mem_page	24	static
+../BME680_driver-master/bme680.c:1295:15:get_mem_page	24	static
+../BME680_driver-master/bme680.c:1317:15:boundary_check.constprop	0	static
+../BME680_driver-master/bme680.c:306:8:bme680_get_regs	32	static
+../BME680_driver-master/bme680.c:331:8:bme680_set_regs	72	static
+../BME680_driver-master/bme680.c:370:8:bme680_soft_reset	24	static
+../BME680_driver-master/bme680.c:278:8:bme680_init	64	static
+../BME680_driver-master/bme680.c:528:8:bme680_get_sensor_settings	32	static
+../BME680_driver-master/bme680.c:580:8:bme680_set_sensor_mode	24	static
+../BME680_driver-master/bme680.c:404:8:bme680_set_sensor_settings	56	static
+../BME680_driver-master/bme680.c:619:8:bme680_get_sensor_mode	16	static
+../BME680_driver-master/bme680.c:638:6:bme680_set_profile_dur	16	static
+../BME680_driver-master/bme680.c:663:6:bme680_get_profile_dur	16	static
+../BME680_driver-master/bme680.c:696:8:bme680_get_sensor_data	200	static

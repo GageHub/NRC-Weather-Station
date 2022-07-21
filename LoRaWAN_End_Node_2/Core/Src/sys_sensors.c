@@ -507,31 +507,6 @@ void getWindDir(void) {
 
 } // getWindDir function
 
-int getRainfall(int rainTips) {
-
-	// interrupt function. Increments every reed closure. twice per tip (debounce)
-	rainTips++;
-
-	//char rainfallMsg[80];
-	//rainFallInMM = rainTips*0.1397; //2791 per tip, 2x due to debounce
-
-	// only print once every tip, again accounting for debounce
-	if(rainTips % 2 == 0) {
-		//sprintf(rainfallMsg, "Rainfall since program start: %f mm \r\n", rainFallInMM);
-		//DebugSerialOutput(rainfallMsg);
-	}
-
-	return rainTips;
-
-} // getRainfall function
-
-void getWindSpeed() {
-
-	// interrupt function. Increments every reed closure. ~3 times in a full rotation
-	//windTips++;
-
-} // getWindSpeed function
-
 void printWindSpeed() {
 
 	// hold uart msg

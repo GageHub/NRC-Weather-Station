@@ -332,6 +332,16 @@ static UTIL_TIMER_Object_t RxLedTimer;
   */
 static UTIL_TIMER_Object_t JoinLedTimer;
 
+// rain vars
+static float rainConvert = 0.09312; //0.1397; //0.2791 per tip, /2 due to debounce
+static float rainFallInMM = 0;
+static int rainTips = 0;
+
+// wind vars
+static int windCounts = 0;
+static int windTips = 0;
+static float windValues[60] = {0};
+
 /* USER CODE END PV */
 
 /* Exported functions ---------------------------------------------------------*/
@@ -446,6 +456,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     case  BUT3_Pin:
       UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaStoreContextEvent), CFG_SEQ_Prio_0);
       break;
+
+      // rain tip pin
+      case  GPIO_PIN_14:
+        rainTips = getRainfall(rainTips);
+        rainFallInMM = rainTips*rainConvert*10000;
+        break;
+      // wind speed pin
+      case  GPIO_PIN_4:
+        getWindSpeed();
+        break;
+
     default:
       break;
   }
@@ -455,6 +476,22 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 /* Private functions ---------------------------------------------------------*/
 /* USER CODE BEGIN PrFD */
+
+int getRainfall(int rainTips) {
+
+  // interrupt function. Increments every reed closure. twice per tip (debounce)
+  rainTips++;
+
+  return rainTips;
+
+} // getRainfall function
+
+void getWindSpeed() {
+
+  // interrupt function. Increments every reed closure. ~3 times in a full rotation
+  windTips++;
+
+} // getWindSpeed function
 
 /* USER CODE END PrFD */
 
@@ -564,6 +601,9 @@ static void SendTxData(void)
   APP_LOG(TS_ON, VLEVEL_M, "temp: %d\r\n", (int16_t)(sensor_data.temperature));
   APP_LOG(TS_ON, VLEVEL_M, "hum: %d\r\n", (int16_t)(sensor_data.humidity));
   APP_LOG(TS_ON, VLEVEL_M, "pres: %d\r\n", (int16_t)(sensor_data.pressure));
+  APP_LOG(TS_ON, VLEVEL_M, "rainfall: %d\r\n", (int16_t)rainFallInMM);
+  APP_LOG(TS_ON, VLEVEL_M, "wndpsd: %d\r\n", (int16_t)windTips);
+  //APP_LOG(TS_ON, VLEVEL_M, "wnddir: %s\r\n", sensor_data.windDir);
 
   AppData.Port = LORAWAN_USER_APP_PORT;
 
