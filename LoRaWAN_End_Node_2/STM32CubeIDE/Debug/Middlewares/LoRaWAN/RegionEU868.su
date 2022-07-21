@@ -2,7 +2,7 @@ C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:61:13:VerifyRfFreq	1
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:101:20:GetTimeOnAir	32	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:119:12:RegionEU868GetPhyParam	32	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:338:6:RegionEU868SetBandTxDone	16	static
-C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:351:6:RegionEU868InitDefaults	160	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:351:6:RegionEU868InitDefaults	152	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:423:6:RegionEU868Verify	16	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:524:6:RegionEU868ChanMaskSet	8	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:548:6:RegionEU868ComputeRxWindowParameters	32	static
@@ -18,5 +18,6 @@ C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:972:17:RegionEU868Ch
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:1036:6:RegionEU868ChannelsRemove	8	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:463:6:RegionEU868ApplyCFList	40	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:817:8:RegionEU868NewChannelReq	24	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:1056:6:RegionEU868SetContinuousWave	16	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:1071:9:RegionEU868ApplyDrOffset	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionEU868.c:1086:6:RegionEU868RxBeaconSetup	40	static

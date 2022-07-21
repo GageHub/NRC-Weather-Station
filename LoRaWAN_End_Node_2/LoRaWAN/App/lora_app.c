@@ -598,12 +598,12 @@ static void SendTxData(void)
   EnvSensors_Read(&sensor_data);
 
   APP_LOG(TS_ON, VLEVEL_M, "VDDA: %d\r\n", batteryLevel);
-  APP_LOG(TS_ON, VLEVEL_M, "temp: %d\r\n", (int16_t)(sensor_data.temperature));
-  APP_LOG(TS_ON, VLEVEL_M, "hum: %d\r\n", (int16_t)(sensor_data.humidity));
-  APP_LOG(TS_ON, VLEVEL_M, "pres: %d\r\n", (int16_t)(sensor_data.pressure));
-  APP_LOG(TS_ON, VLEVEL_M, "rainfall: %d\r\n", (int16_t)rainFallInMM);
-  APP_LOG(TS_ON, VLEVEL_M, "wndpsd: %d\r\n", (int16_t)windTips);
-  //APP_LOG(TS_ON, VLEVEL_M, "wnddir: %s\r\n", sensor_data.windDir);
+  APP_LOG(TS_ON, VLEVEL_M, "temperature: %d deg C\r\n", (int16_t)(sensor_data.temperature));
+  APP_LOG(TS_ON, VLEVEL_M, "humidity: %d rH \r\n", (int16_t)(sensor_data.humidity));
+  APP_LOG(TS_ON, VLEVEL_M, "air pressure: %d hPa \r\n", (int16_t)(sensor_data.pressure));
+  APP_LOG(TS_ON, VLEVEL_M, "rainfall since program start: %d mm \r\n", (int16_t)rainFallInMM);
+  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind speed: %d km/h \r\n", (int16_t)windTips);
+  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %s \r\n", "North");
 
   AppData.Port = LORAWAN_USER_APP_PORT;
 
@@ -623,9 +623,9 @@ static void SendTxData(void)
   CayenneLppCopy(AppData.Buffer);
   AppData.BufferSize = CayenneLppGetSize();
 #else  /* not CAYENNE_LPP */
-  humidity    = (uint16_t)(sensor_data.humidity * 10);            /* in %*10     */
+  humidity    = (uint16_t)(sensor_data.humidity);
   temperature = (int16_t)(sensor_data.temperature);
-  pressure = (uint16_t)(sensor_data.pressure * 100 / 10); /* in hPa / 10 */
+  pressure = (uint16_t)(sensor_data.pressure);
 
   AppData.Buffer[i++] = AppLedStateOn;
   AppData.Buffer[i++] = (uint8_t)((pressure >> 8) & 0xFF);

@@ -13,6 +13,7 @@ C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1000:23:SecureElementAesEncr
 C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:791:23:SecureElementSetKey	32	static
 C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1089:23:SecureElementDeriveAndStoreKey	24	static
 C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1179:23:SecureElementProcessJoinAccept	24	static
+C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1281:23:SecureElementRandomNumber	8	static
 C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1292:23:SecureElementSetDevEui	8	static
 C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1302:10:SecureElementGetDevEui	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Crypto/soft-se.c:1307:23:SecureElementSetJoinEui	8	static

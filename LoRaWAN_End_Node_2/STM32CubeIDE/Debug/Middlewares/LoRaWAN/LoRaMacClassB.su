@@ -27,5 +27,4 @@ C:/Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassB.c:1963:13:LoRaMacClassBIsUp
 C:/Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassB.c:1987:6:LoRaMacClassBStopRxSlots	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassB.c:2000:6:LoRaMacClassBStartRxSlots	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassB.c:2016:6:LoRaMacClassBSetMulticastPeriodicity	0	static
-C:/Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassB.c:2028:6:LoRaMacClassBSetFPendingBit	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassB.c:2057:6:LoRaMacClassBProcess	0	static

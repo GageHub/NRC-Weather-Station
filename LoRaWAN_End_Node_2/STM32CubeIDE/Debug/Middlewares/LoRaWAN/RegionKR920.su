@@ -16,5 +16,6 @@ C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:876:17:RegionKR920Ne
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:951:17:RegionKR920ChannelAdd	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:1014:6:RegionKR920ChannelsRemove	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:781:8:RegionKR920NewChannelReq	24	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:1034:6:RegionKR920SetContinuousWave	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:1054:9:RegionKR920ApplyDrOffset	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c:1069:6:RegionKR920RxBeaconSetup	0	static

@@ -16,5 +16,6 @@ C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:995:17:RegionAS923Ne
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:1077:17:RegionAS923ChannelAdd	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:1140:6:RegionAS923ChannelsRemove	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:899:8:RegionAS923NewChannelReq	24	static
-C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:1194:9:RegionAS923ApplyDrOffset	0	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:1160:6:RegionAS923SetContinuousWave	0	static
+C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:1174:9:RegionAS923ApplyDrOffset	0	static
 C:/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionAS923.c:1219:6:RegionAS923RxBeaconSetup	0	static
