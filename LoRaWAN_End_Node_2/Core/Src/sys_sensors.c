@@ -454,7 +454,7 @@ void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t r
 	  (unsigned int)data.humidity % 1000);
 
 	sensor_data->humidity    = data.humidity / 1000;
-	sensor_data->temperature = data.temperature / 100;
+	sensor_data->temperature = data.temperature;
 	sensor_data->pressure    = data.pressure / 100;
 
 	// Publish result to connected PC

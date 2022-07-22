@@ -230,6 +230,9 @@ static void OnRxTimerLedEvent(void *context);
   */
 static void OnJoinTimerLedEvent(void *context);
 
+void getWindSpeed();
+int getRainfall(int rainTips);
+
 /* USER CODE END PFP */
 
 /* Private variables ---------------------------------------------------------*/
@@ -338,9 +341,9 @@ static float rainFallInMM = 0;
 static int rainTips = 0;
 
 // wind vars
-static int windCounts = 0;
+//static int windCounts = 0;
 static int windTips = 0;
-static float windValues[60] = {0};
+//static float windValues[60] = {0};
 
 /* USER CODE END PV */
 
