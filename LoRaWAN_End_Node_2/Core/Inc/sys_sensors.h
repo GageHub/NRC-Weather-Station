@@ -38,7 +38,7 @@ extern "C" {
 typedef struct
 {
   float pressure;         /*!< in mbar */
-  float temperature;      /*!< in degC */
+  int temperature;      /*!< in degC */
   float humidity;         /*!< in % */
   int32_t latitude;       /*!< latitude converted to binary */
   int32_t longitude;      /*!< longitude converted to binary */

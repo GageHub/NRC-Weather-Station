@@ -453,9 +453,9 @@ void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t r
 	  (unsigned int)data.humidity / 1000,
 	  (unsigned int)data.humidity % 1000);
 
-	sensor_data->humidity    = data.humidity / 1000;
+	sensor_data->humidity    = data.humidity;
 	sensor_data->temperature = data.temperature;
-	sensor_data->pressure    = data.pressure / 100;
+	sensor_data->pressure    = data.pressure;
 
 	// Publish result to connected PC
 	//DebugSerialOutput(i2c_reading_buf);
@@ -509,16 +509,14 @@ void getWindDir(void) {
 
 void printWindSpeed() {
 
-	// hold uart msg
-	//char windMsg[80];
-
+	/*
 	// calculate a store windspeed taken over 5 sec period
-	//windValues[windCounts++] = windTips*2.4/5/3;
+	windValues[windCounts++] = windTips*2.4/5/3;
 
 	// reset array index if filled. for purposes of averaging
-	//if(windCounts > 60) {
-	//	windCounts = 0;
-	//}
+	if(windCounts > 60) {
+		windCounts = 0;
+	}
 
 	//sprintf(windMsg, "Full spins in 5 seconds: %u \r\n", windTips/3);
 	//DebugSerialOutput(windMsg);
@@ -527,20 +525,22 @@ void printWindSpeed() {
 	//DebugSerialOutput(windMsg);
 
 	// find and report average windspeed
-	//float avgWindSpeed = 0.0;
-	//for(int i = 0; i<60; i++) {
-	//	avgWindSpeed += windValues[i];
-	//}
+	float avgWindSpeed = 0.0;
+	for(int i = 0; i<60; i++) {
+		avgWindSpeed += windValues[i];
+	}
 
-	//if(sampleNumber < 60) {
-	//	avgWindSpeed = avgWindSpeed / windCounts;
-	//}
-	//else {
-	//	avgWindSpeed = avgWindSpeed / 60;
-	//}
+	if(sampleNumber < 60) {
+		avgWindSpeed = avgWindSpeed / windCounts;
+	}
+	else {
+		avgWindSpeed = avgWindSpeed / 60;
+	}
 
 	//sprintf(windMsg, "Avg Wind speed over 15 min: %f km/h \r\n", avgWindSpeed);
 	//DebugSerialOutput(windMsg);
+
+	*/
 }
 
 /* USER CODE END PrFD */

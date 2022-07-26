@@ -94,7 +94,7 @@
 /** BME680 configuration macros */
 /** Enable or un-comment the macro to provide floating point data output */
 #ifndef BME680_FLOAT_POINT_COMPENSATION
-/* #define BME680_FLOAT_POINT_COMPENSATION */
+   //#define BME680_FLOAT_POINT_COMPENSATION
 #endif
 
 /** BME680 General config */

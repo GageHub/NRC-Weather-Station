@@ -66,6 +66,18 @@ typedef enum TxEventType_e
 
 /* USER CODE BEGIN PTD */
 
+typedef union
+{
+	uint8_t   ui8;
+	int8_t    i8;
+	uint16_t  ui16;
+	int16_t   i16;
+	uint32_t  ui32;
+	int32_t   i32;
+	float     flt;
+	uint8_t   bytes[4];
+} EEDATA;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -341,9 +353,9 @@ static float rainFallInMM = 0;
 static int rainTips = 0;
 
 // wind vars
-//static int windCounts = 0;
+static int windCounts = 0;
 static int windTips = 0;
-//static float windValues[60] = {0};
+static float windValues[60] = {0};
 
 /* USER CODE END PV */
 
@@ -494,6 +506,27 @@ void getWindSpeed() {
   // interrupt function. Increments every reed closure. ~3 times in a full rotation
   windTips++;
 
+  // calculate a store windspeed taken over 5 sec period
+  windValues[windCounts++] = windTips*2.4/3;
+
+  // reset array index if filled. for purposes of averaging
+  if(windCounts > 60) {
+	windCounts = 0;
+  }
+
+  // find and report average windspeed
+  float avgWindSpeed = 0.0;
+  for(int i = 0; i<60; i++) {
+	avgWindSpeed += windValues[i];
+  }
+
+  if(windCounts < 60) {
+	avgWindSpeed = avgWindSpeed / windCounts;
+  }
+  else {
+   	avgWindSpeed = avgWindSpeed / 60;
+  }
+
 } // getWindSpeed function
 
 /* USER CODE END PrFD */
@@ -600,6 +633,15 @@ static void SendTxData(void)
   EnvSensors_Init();
   EnvSensors_Read(&sensor_data);
 
+  EEDATA tmp;
+  tmp.flt = (float)sensor_data.temperature/100;
+
+  EEDATA hum;
+  hum.flt = (float)sensor_data.humidity/1000;
+
+  EEDATA pres;
+  pres.flt = (float)sensor_data.pressure/100;
+
   APP_LOG(TS_ON, VLEVEL_M, "VDDA: %d\r\n", batteryLevel);
   APP_LOG(TS_ON, VLEVEL_M, "temperature: %d deg C\r\n", (int16_t)(sensor_data.temperature));
   APP_LOG(TS_ON, VLEVEL_M, "humidity: %d rH \r\n", (int16_t)(sensor_data.humidity));
@@ -630,20 +672,69 @@ static void SendTxData(void)
   temperature = (int16_t)(sensor_data.temperature);
   pressure = (uint16_t)(sensor_data.pressure);
 
-  AppData.Buffer[i++] = AppLedStateOn;
-  AppData.Buffer[i++] = (uint8_t)((pressure >> 8) & 0xFF);
-  AppData.Buffer[i++] = (uint8_t)(pressure & 0xFF);
-  AppData.Buffer[i++] = (uint8_t)(temperature & 0xFF);
-  AppData.Buffer[i++] = (uint8_t)((humidity >> 8) & 0xFF);
-  AppData.Buffer[i++] = (uint8_t)(humidity & 0xFF);
+  // init
+  AppData.Buffer[i++] = (uint8_t)(97);
+  AppData.Buffer[i++] = (uint8_t)(102);
+  AppData.Buffer[i++] = (uint8_t)(0);
+  AppData.Buffer[i++] = (uint8_t)(1);
+
+  // temp
+  AppData.Buffer[i++] = (uint8_t)(60);
+  AppData.Buffer[i++] = (uint8_t)(104); //104 = float
+  AppData.Buffer[i++] = tmp.bytes[3];//(temperature);
+  AppData.Buffer[i++] = tmp.bytes[2];
+  AppData.Buffer[i++] = tmp.bytes[1];
+  AppData.Buffer[i++] = tmp.bytes[0];
+
+  // pressure
+  AppData.Buffer[i++] = (uint8_t)(61);
+  AppData.Buffer[i++] = (uint8_t)(104);
+  AppData.Buffer[i++] = pres.bytes[3];
+  AppData.Buffer[i++] = pres.bytes[2];
+  AppData.Buffer[i++] = pres.bytes[1];
+  AppData.Buffer[i++] = pres.bytes[0];
+
+  // humidity
+  AppData.Buffer[i++] = (uint8_t)(62);
+  AppData.Buffer[i++] = (uint8_t)(102); //102 = uint16
+  AppData.Buffer[i++] = hum.bytes[3];
+  AppData.Buffer[i++] = hum.bytes[2];
+
+  /*
+  // total rainfall
+  AppData.Buffer[i++] = (uint8_t)(63);
+  AppData.Buffer[i++] = (uint8_t)(104);
+  AppData.Buffer[i++] = (uint8_t)(rainfall);
+  */
+
+  /*
+  // wind direction
+  AppData.Buffer[i++] = (uint8_t)(64);
+  AppData.Buffer[i++] = (uint8_t)(102);
+  AppData.Buffer[i++] = (uint8_t)(windDir);
+  */
+
+  /*
+  // wind speed
+  AppData.Buffer[i++] = (uint8_t)(65);
+  AppData.Buffer[i++] = (uint8_t)(104);
+  AppData.Buffer[i++] = (uint8_t)(windSpeed);
+  */
+
+  //AppData.Buffer[i++] = AppLedStateOn;
+  //AppData.Buffer[i++] = (uint8_t)((pressure >> 8) & 0xFF);
+  //AppData.Buffer[i++] = (uint8_t)(pressure & 0xFF);
+  //AppData.Buffer[i++] = (uint8_t)(temperature & 0xFF);
+  //AppData.Buffer[i++] = (uint8_t)((humidity >> 8) & 0xFF);
+  //AppData.Buffer[i++] = (uint8_t)(humidity & 0xFF);
 
   if ((LmHandlerParams.ActiveRegion == LORAMAC_REGION_US915) || (LmHandlerParams.ActiveRegion == LORAMAC_REGION_AU915)
       || (LmHandlerParams.ActiveRegion == LORAMAC_REGION_AS923))
   {
-    AppData.Buffer[i++] = 0;
-    AppData.Buffer[i++] = 0;
-    AppData.Buffer[i++] = 0;
-    AppData.Buffer[i++] = 0;
+    //AppData.Buffer[i++] = 0;
+    //AppData.Buffer[i++] = 0;
+    //AppData.Buffer[i++] = 0;
+    //AppData.Buffer[i++] = 0;
   }
   else
   {
