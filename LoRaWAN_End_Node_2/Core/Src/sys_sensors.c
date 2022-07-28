@@ -443,22 +443,9 @@ void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t r
 	// Query the sample data
 	rslt = bme680_get_sensor_data(&data, &gas_sensor);
 
-	// Format results into a readable string
-	sprintf(i2c_reading_buf,
-	  "Temp: %u.%u degC, Pres: %u.%u hPa, Humi: %u.%u %%rH\r\n",
-	  (unsigned int)data.temperature / 100,
-	  (unsigned int)data.temperature % 100,
-	  (unsigned int)data.pressure / 100,
-	  (unsigned int)data.pressure % 100,
-	  (unsigned int)data.humidity / 1000,
-	  (unsigned int)data.humidity % 1000);
-
-	sensor_data->humidity    = data.humidity;
+	sensor_data->humidity    = data.humidity / 1000;
 	sensor_data->temperature = data.temperature;
 	sensor_data->pressure    = data.pressure;
-
-	// Publish result to connected PC
-	//DebugSerialOutput(i2c_reading_buf);
 
 	// Request the next sample
 	if (gas_sensor.power_mode == BME680_FORCED_MODE) {
@@ -472,14 +459,16 @@ void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t r
 void getWindDir(void) {
 
 	//------------------------Take Sample Using weather vane ADC ---------------------------
+
 	// init variables
     uint16_t raw;
-    char msg[80];
     int numDirs = 7;
     int inIf = 0;
+
     // digital voltage values and the directions they correspond to
     uint16_t vMin[] = {1660, 625, 120, 220, 330, 1045, 2860, 2300};  	// 5V = 4095, 0V = (50) 0
     uint16_t vMax[] = {1700, 670, 160, 260, 380, 1080, 2890, 2355};
+    uint16_t windDeg = {360, 45, 90, 135, 180, 225, 270, 315};
     char* windDir[] = {"North","North East","East","South East","South","South West","West","North West"};
 
     // poll the ADC for its value, that value corresponds to a direction
@@ -490,57 +479,23 @@ void getWindDir(void) {
 	// check that direction, print it to serial
 	for(int i=0; i<=numDirs; i++) {
 		if(raw >= vMin[i] && raw <= vMax[i]) {
-			//sprintf(msg, "The wind is blowing %s \r\n", windDir[i]);
-			//DebugSerialOutput(msg);
+
+			//windDeg[i];
+			//windDir[i];
+
 			inIf = 1;
 			break;
-		}//if
-	} //for
+		}
+	}
 
 	// during rapid wind direction change voltage can fall out of range of values. failsafe.
 	if(!inIf) {
-		//sprintf(msg, "The wind direction is changing rapidly \r\n");
-		//DebugSerialOutput(msg);
+
+		//windDeg = 361 during rapid
 	}
 
 	//------------------------Finish weather vane sample --------------------------------
 
 } // getWindDir function
-
-void printWindSpeed() {
-
-	/*
-	// calculate a store windspeed taken over 5 sec period
-	windValues[windCounts++] = windTips*2.4/5/3;
-
-	// reset array index if filled. for purposes of averaging
-	if(windCounts > 60) {
-		windCounts = 0;
-	}
-
-	//sprintf(windMsg, "Full spins in 5 seconds: %u \r\n", windTips/3);
-	//DebugSerialOutput(windMsg);
-
-	//sprintf(windMsg, "Wind speed over 5 seconds: %f \r\n", windValues[windCounts-1]);
-	//DebugSerialOutput(windMsg);
-
-	// find and report average windspeed
-	float avgWindSpeed = 0.0;
-	for(int i = 0; i<60; i++) {
-		avgWindSpeed += windValues[i];
-	}
-
-	if(sampleNumber < 60) {
-		avgWindSpeed = avgWindSpeed / windCounts;
-	}
-	else {
-		avgWindSpeed = avgWindSpeed / 60;
-	}
-
-	//sprintf(windMsg, "Avg Wind speed over 15 min: %f km/h \r\n", avgWindSpeed);
-	//DebugSerialOutput(windMsg);
-
-	*/
-}
 
 /* USER CODE END PrFD */

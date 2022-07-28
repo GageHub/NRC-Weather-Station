@@ -356,6 +356,7 @@ static int rainTips = 0;
 static int windCounts = 0;
 static int windTips = 0;
 static float windValues[60] = {0};
+static float avgWindSpeed = 0.0;
 
 /* USER CODE END PV */
 
@@ -506,27 +507,6 @@ void getWindSpeed() {
   // interrupt function. Increments every reed closure. ~3 times in a full rotation
   windTips++;
 
-  // calculate a store windspeed taken over 5 sec period
-  windValues[windCounts++] = windTips*2.4/3;
-
-  // reset array index if filled. for purposes of averaging
-  if(windCounts > 60) {
-	windCounts = 0;
-  }
-
-  // find and report average windspeed
-  float avgWindSpeed = 0.0;
-  for(int i = 0; i<60; i++) {
-	avgWindSpeed += windValues[i];
-  }
-
-  if(windCounts < 60) {
-	avgWindSpeed = avgWindSpeed / windCounts;
-  }
-  else {
-   	avgWindSpeed = avgWindSpeed / 60;
-  }
-
 } // getWindSpeed function
 
 /* USER CODE END PrFD */
@@ -633,14 +613,36 @@ static void SendTxData(void)
   EnvSensors_Init();
   EnvSensors_Read(&sensor_data);
 
+  // calculate a store windspeed taken over 120 sec period
+  windValues[windCounts++] = windTips*0.02/3;
+
+  // reset array index if filled. for purposes of averaging
+  if(windCounts > 60) {
+	windCounts = 0;
+  }
+
+  // find and report average windspeed
+  for(int i = 0; i<60; i++) {
+	avgWindSpeed += windValues[i];
+  }
+
+  if(windCounts < 60) {
+	avgWindSpeed = avgWindSpeed / windCounts;
+  }
+  else {
+   	avgWindSpeed = avgWindSpeed / 60;
+  }
+
+  windTips = 0;
+
   EEDATA tmp;
   tmp.flt = (float)sensor_data.temperature/100;
-
-  EEDATA hum;
-  hum.flt = (float)sensor_data.humidity/1000;
-
+  EEDATA rain;
+  rain.flt = (float)rainFallInMM/1000;
   EEDATA pres;
   pres.flt = (float)sensor_data.pressure/100;
+  EEDATA spd;
+  spd.flt = avgWindSpeed;
 
   APP_LOG(TS_ON, VLEVEL_M, "VDDA: %d\r\n", batteryLevel);
   APP_LOG(TS_ON, VLEVEL_M, "temperature: %d deg C\r\n", (int16_t)(sensor_data.temperature));
@@ -648,6 +650,7 @@ static void SendTxData(void)
   APP_LOG(TS_ON, VLEVEL_M, "air pressure: %d hPa \r\n", (int16_t)(sensor_data.pressure));
   APP_LOG(TS_ON, VLEVEL_M, "rainfall since program start: %d mm \r\n", (int16_t)rainFallInMM);
   APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind speed: %d km/h \r\n", (int16_t)windTips);
+  APP_LOG(TS_ON, VLEVEL_M, "avg wind speed: %d km/h \r\n", (int16_t)avgWindSpeed);
   APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %s \r\n", "North");
 
   AppData.Port = LORAWAN_USER_APP_PORT;
@@ -697,29 +700,31 @@ static void SendTxData(void)
   // humidity
   AppData.Buffer[i++] = (uint8_t)(62);
   AppData.Buffer[i++] = (uint8_t)(102); //102 = uint16
-  AppData.Buffer[i++] = hum.bytes[3];
-  AppData.Buffer[i++] = hum.bytes[2];
+  AppData.Buffer[i++] = 0;
+  AppData.Buffer[i++] = humidity;
 
-  /*
+
   // total rainfall
   AppData.Buffer[i++] = (uint8_t)(63);
   AppData.Buffer[i++] = (uint8_t)(104);
-  AppData.Buffer[i++] = (uint8_t)(rainfall);
-  */
+  AppData.Buffer[i++] = rain.bytes[3];
+  AppData.Buffer[i++] = rain.bytes[2];
+  AppData.Buffer[i++] = rain.bytes[1];
+  AppData.Buffer[i++] = rain.bytes[0];
 
-  /*
   // wind direction
   AppData.Buffer[i++] = (uint8_t)(64);
   AppData.Buffer[i++] = (uint8_t)(102);
-  AppData.Buffer[i++] = (uint8_t)(windDir);
-  */
+  AppData.Buffer[i++] = 0;
+  AppData.Buffer[i++] = 100;
 
-  /*
   // wind speed
   AppData.Buffer[i++] = (uint8_t)(65);
   AppData.Buffer[i++] = (uint8_t)(104);
-  AppData.Buffer[i++] = (uint8_t)(windSpeed);
-  */
+  AppData.Buffer[i++] = spd.bytes[3];
+  AppData.Buffer[i++] = spd.bytes[2];
+  AppData.Buffer[i++] = spd.bytes[1];
+  AppData.Buffer[i++] = spd.bytes[0];
 
   //AppData.Buffer[i++] = AppLedStateOn;
   //AppData.Buffer[i++] = (uint8_t)((pressure >> 8) & 0xFF);

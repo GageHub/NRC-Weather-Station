@@ -39,7 +39,7 @@ typedef struct
 {
   float pressure;         /*!< in mbar */
   int temperature;      /*!< in degC */
-  float humidity;         /*!< in % */
+  int humidity;         /*!< in % */
   int32_t latitude;       /*!< latitude converted to binary */
   int32_t longitude;      /*!< longitude converted to binary */
   int16_t altitudeGps;    /*!< in m */
