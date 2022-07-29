@@ -68,6 +68,7 @@
 #endif  /* SENSOR_ENABLED */
 
 #include "i2c.h"
+#include "adc.h"
 // C Includes
 #include <stdbool.h>
 #include <stddef.h>
@@ -142,6 +143,8 @@ bme bmes;
 // Sampling results variable
 struct bme680_field_data data;
 
+int inited = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -151,10 +154,7 @@ int8_t bme680I2cRead(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16
 int8_t bme680I2cWrite(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len);
 bme bme680Init(struct bme680_dev gas_sensor, int8_t rslt, bme bmes);
 void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t rslt, struct bme680_field_data data, uint16_t min_sampling_period, struct bme680_dev gas_sensor);
-void getWindDir(void);
-int getRainfall(int rainTips);
-void getWindSpeed();
-void printWindSpeed();
+void getWindDir(sensor_t *sensor_data);
 
 /* USER CODE END PFP */
 
@@ -195,6 +195,7 @@ int32_t EnvSensors_Read(sensor_t *sensor_data)
   sensor_data->longitude = (int32_t)((STSOP_LONGITUDE  * MAX_GPS_POS) / 180);
 
   bme680TakeSample(sensor_data, i2c_reading_buf, bmes.result, data, bmes.min_period, bmes.gs);
+  //getWindDir(sensor_data);
 
   return 0;
   /* USER CODE END EnvSensors_Read */
@@ -324,6 +325,11 @@ int32_t EnvSensors_Init(void)
 #elif !defined (SENSOR_ENABLED)
 #error SENSOR_ENABLED not defined
 #endif /* SENSOR_ENABLED  */
+
+  if(inited == 0) {
+	  MX_ADC_Init();
+	  inited = 1;
+  }
 
   // Initialize BME680 sensor
   bmes = bme680Init(gas_sensor, rslt, bmes);
@@ -456,9 +462,7 @@ void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t r
 
 } // bme680TakeSample function
 
-void getWindDir(void) {
-
-	//------------------------Take Sample Using weather vane ADC ---------------------------
+void getWindDir(sensor_t *sensor_data) {
 
 	// init variables
     uint16_t raw;
@@ -468,33 +472,28 @@ void getWindDir(void) {
     // digital voltage values and the directions they correspond to
     uint16_t vMin[] = {1660, 625, 120, 220, 330, 1045, 2860, 2300};  	// 5V = 4095, 0V = (50) 0
     uint16_t vMax[] = {1700, 670, 160, 260, 380, 1080, 2890, 2355};
-    uint16_t windDeg = {360, 45, 90, 135, 180, 225, 270, 315};
-    char* windDir[] = {"North","North East","East","South East","South","South West","West","North West"};
+    uint16_t windDeg[] = {360, 45, 90, 135, 180, 225, 270, 315};
+    //char* windDir[] = {"North","North East","East","South East","South","South West","West","North West"};
 
     // poll the ADC for its value, that value corresponds to a direction
     HAL_ADC_Start(&hadc);
 	HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
 	raw = HAL_ADC_GetValue(&hadc);
 
-	// check that direction, print it to serial
+	// check that direction
 	for(int i=0; i<=numDirs; i++) {
 		if(raw >= vMin[i] && raw <= vMax[i]) {
-
-			//windDeg[i];
-			//windDir[i];
-
+			sensor_data->windDeg = windDeg[i];
 			inIf = 1;
 			break;
 		}
 	}
 
-	// during rapid wind direction change voltage can fall out of range of values. failsafe.
+	// during rapid wind direction change voltage can fall out of range of values. fail safe.
 	if(!inIf) {
-
 		//windDeg = 361 during rapid
+		sensor_data->windDeg = 361;
 	}
-
-	//------------------------Finish weather vane sample --------------------------------
 
 } // getWindDir function
 

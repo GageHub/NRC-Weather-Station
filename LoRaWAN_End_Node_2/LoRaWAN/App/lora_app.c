@@ -348,7 +348,7 @@ static UTIL_TIMER_Object_t RxLedTimer;
 static UTIL_TIMER_Object_t JoinLedTimer;
 
 // rain vars
-static float rainConvert = 0.09312; //0.1397; //0.2791 per tip, /2 due to debounce
+static float rainConvert = 0.1397; //0.09312; //0.1397; //0.2791 per tip, /2 due to debounce
 static float rainFallInMM = 0;
 static int rainTips = 0;
 
@@ -476,7 +476,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
       // rain tip pin
       case  GPIO_PIN_14:
         rainTips = getRainfall(rainTips);
-        rainFallInMM = rainTips*rainConvert*10000;
+        rainFallInMM = rainTips*rainConvert*1000;
         break;
       // wind speed pin
       case  GPIO_PIN_4:
@@ -604,6 +604,7 @@ static void SendTxData(void)
   uint16_t pressure = 0;
   int16_t temperature = 0;
   uint16_t humidity = 0;
+  uint16_t windDirection = 0;
   uint32_t i = 0;
   int32_t latitude = 0;
   int32_t longitude = 0;
@@ -648,10 +649,10 @@ static void SendTxData(void)
   APP_LOG(TS_ON, VLEVEL_M, "temperature: %d deg C\r\n", (int16_t)(sensor_data.temperature));
   APP_LOG(TS_ON, VLEVEL_M, "humidity: %d rH \r\n", (int16_t)(sensor_data.humidity));
   APP_LOG(TS_ON, VLEVEL_M, "air pressure: %d hPa \r\n", (int16_t)(sensor_data.pressure));
-  APP_LOG(TS_ON, VLEVEL_M, "rainfall since program start: %d mm \r\n", (int16_t)rainFallInMM);
-  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind speed: %d km/h \r\n", (int16_t)windTips);
-  APP_LOG(TS_ON, VLEVEL_M, "avg wind speed: %d km/h \r\n", (int16_t)avgWindSpeed);
-  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %s \r\n", "North");
+  APP_LOG(TS_ON, VLEVEL_M, "rainfall since program start: %d mm \r\n", (int16_t)(rainFallInMM));
+  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind speed: %d km/h \r\n", (int16_t)(windTips));
+  APP_LOG(TS_ON, VLEVEL_M, "avg wind speed: %d km/h \r\n", (int16_t)(avgWindSpeed));
+  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %d deg \r\n", (int16_t)(sensor_data.windDeg));
 
   AppData.Port = LORAWAN_USER_APP_PORT;
 
@@ -674,6 +675,7 @@ static void SendTxData(void)
   humidity    = (uint16_t)(sensor_data.humidity);
   temperature = (int16_t)(sensor_data.temperature);
   pressure = (uint16_t)(sensor_data.pressure);
+  windDirection = (uint16_t)(sensor_data.windDeg);
 
   // init
   AppData.Buffer[i++] = (uint8_t)(97);
@@ -703,7 +705,6 @@ static void SendTxData(void)
   AppData.Buffer[i++] = 0;
   AppData.Buffer[i++] = humidity;
 
-
   // total rainfall
   AppData.Buffer[i++] = (uint8_t)(63);
   AppData.Buffer[i++] = (uint8_t)(104);
@@ -716,7 +717,7 @@ static void SendTxData(void)
   AppData.Buffer[i++] = (uint8_t)(64);
   AppData.Buffer[i++] = (uint8_t)(102);
   AppData.Buffer[i++] = 0;
-  AppData.Buffer[i++] = 100;
+  AppData.Buffer[i++] = windDirection;
 
   // wind speed
   AppData.Buffer[i++] = (uint8_t)(65);
