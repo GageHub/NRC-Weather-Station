@@ -47,6 +47,7 @@ typedef struct
   /**more may be added*/
   /* USER CODE BEGIN sensor_t */
   int16_t windDeg;
+  uint16_t raw;
   /* USER CODE END sensor_t */
 } sensor_t;
 

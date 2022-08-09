@@ -347,6 +347,9 @@ static UTIL_TIMER_Object_t RxLedTimer;
   */
 static UTIL_TIMER_Object_t JoinLedTimer;
 
+// sample index
+int weatherIndex = 1;
+
 // rain vars
 static float rainConvert = 0.1397; //0.09312; //0.1397; //0.2791 per tip, /2 due to debounce
 static float rainFallInMM = 0;
@@ -652,7 +655,9 @@ static void SendTxData(void)
   APP_LOG(TS_ON, VLEVEL_M, "rainfall since program start: %d mm \r\n", (int16_t)(rainFallInMM));
   APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind speed: %d km/h \r\n", (int16_t)(windTips));
   APP_LOG(TS_ON, VLEVEL_M, "avg wind speed: %d km/h \r\n", (int16_t)(avgWindSpeed));
+  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %d deg \r\n", (sensor_data.windDeg));
   APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %d deg \r\n", (int16_t)(sensor_data.windDeg));
+  APP_LOG(TS_ON, VLEVEL_M, "raw: %d \r\n", (sensor_data.raw));
 
   AppData.Port = LORAWAN_USER_APP_PORT;
 
@@ -672,21 +677,49 @@ static void SendTxData(void)
   CayenneLppCopy(AppData.Buffer);
   AppData.BufferSize = CayenneLppGetSize();
 #else  /* not CAYENNE_LPP */
+
   humidity    = (uint16_t)(sensor_data.humidity);
   temperature = (int16_t)(sensor_data.temperature);
   pressure = (uint16_t)(sensor_data.pressure);
   windDirection = (uint16_t)(sensor_data.windDeg);
 
-  // init
+  //##########################################################//
+  //                   *Transmit Formats*
+  //          The first number is the ID used to identify
+  //          what type of data is being sent
+  //
+  // 97 - initialization and sample number
+  // 60 - temperature
+  // 61 - air pressure
+  // 62 - humidity
+  // 63 - rainfall
+  // 64 - wind direction
+  // 65 - wind speed
+  //
+  //          The second number is the ID used to identify the
+  //          data type of the data
+  //
+  // 102 - uint16_t
+  // 104 - float
+  //
+  //          An example transmission for a Humidity of 44% would be:
+  //          62 - 102 - 0 - 44
+  //                     ^   ^-------
+  //                     first byte |
+  //                                second byte of data
+  //
+  //###########################################################//
+
+  // initialization
   AppData.Buffer[i++] = (uint8_t)(97);
   AppData.Buffer[i++] = (uint8_t)(102);
   AppData.Buffer[i++] = (uint8_t)(0);
-  AppData.Buffer[i++] = (uint8_t)(1);
+  AppData.Buffer[i++] = (uint8_t)weatherIndex++;
 
-  // temp
+  // temperature
   AppData.Buffer[i++] = (uint8_t)(60);
-  AppData.Buffer[i++] = (uint8_t)(104); //104 = float
-  AppData.Buffer[i++] = tmp.bytes[3];//(temperature);
+  AppData.Buffer[i++] = (uint8_t)(104);
+  AppData.Buffer[i++] = tmp.bytes[3];
   AppData.Buffer[i++] = tmp.bytes[2];
   AppData.Buffer[i++] = tmp.bytes[1];
   AppData.Buffer[i++] = tmp.bytes[0];
@@ -716,8 +749,8 @@ static void SendTxData(void)
   // wind direction
   AppData.Buffer[i++] = (uint8_t)(64);
   AppData.Buffer[i++] = (uint8_t)(102);
-  AppData.Buffer[i++] = 0;
-  AppData.Buffer[i++] = windDirection;
+  AppData.Buffer[i++] = 0;//windDirection & 0xff;
+  AppData.Buffer[i++] = sensor_data.windDeg;//(windDirection >> 8) & 0xff;
 
   // wind speed
   AppData.Buffer[i++] = (uint8_t)(65);
@@ -727,20 +760,10 @@ static void SendTxData(void)
   AppData.Buffer[i++] = spd.bytes[1];
   AppData.Buffer[i++] = spd.bytes[0];
 
-  //AppData.Buffer[i++] = AppLedStateOn;
-  //AppData.Buffer[i++] = (uint8_t)((pressure >> 8) & 0xFF);
-  //AppData.Buffer[i++] = (uint8_t)(pressure & 0xFF);
-  //AppData.Buffer[i++] = (uint8_t)(temperature & 0xFF);
-  //AppData.Buffer[i++] = (uint8_t)((humidity >> 8) & 0xFF);
-  //AppData.Buffer[i++] = (uint8_t)(humidity & 0xFF);
-
   if ((LmHandlerParams.ActiveRegion == LORAMAC_REGION_US915) || (LmHandlerParams.ActiveRegion == LORAMAC_REGION_AU915)
       || (LmHandlerParams.ActiveRegion == LORAMAC_REGION_AS923))
   {
-    //AppData.Buffer[i++] = 0;
-    //AppData.Buffer[i++] = 0;
-    //AppData.Buffer[i++] = 0;
-    //AppData.Buffer[i++] = 0;
+	  ;
   }
   else
   {

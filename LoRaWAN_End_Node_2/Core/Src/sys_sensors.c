@@ -69,6 +69,8 @@
 
 #include "i2c.h"
 #include "adc.h"
+#include "adc_if.h"
+#include "sys_app.h"
 // C Includes
 #include <stdbool.h>
 #include <stddef.h>
@@ -143,8 +145,6 @@ bme bmes;
 // Sampling results variable
 struct bme680_field_data data;
 
-int inited = 0;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -195,7 +195,7 @@ int32_t EnvSensors_Read(sensor_t *sensor_data)
   sensor_data->longitude = (int32_t)((STSOP_LONGITUDE  * MAX_GPS_POS) / 180);
 
   bme680TakeSample(sensor_data, i2c_reading_buf, bmes.result, data, bmes.min_period, bmes.gs);
-  //getWindDir(sensor_data);
+  getWindDir(sensor_data);
 
   return 0;
   /* USER CODE END EnvSensors_Read */
@@ -325,11 +325,6 @@ int32_t EnvSensors_Init(void)
 #elif !defined (SENSOR_ENABLED)
 #error SENSOR_ENABLED not defined
 #endif /* SENSOR_ENABLED  */
-
-  if(inited == 0) {
-	  MX_ADC_Init();
-	  inited = 1;
-  }
 
   // Initialize BME680 sensor
   bmes = bme680Init(gas_sensor, rslt, bmes);
@@ -465,25 +460,49 @@ void bme680TakeSample(sensor_t *sensor_data, char i2c_reading_buf[100], int8_t r
 void getWindDir(sensor_t *sensor_data) {
 
 	// init variables
-    uint16_t raw;
+    uint16_t raw = 0;
     int numDirs = 7;
     int inIf = 0;
 
-    // digital voltage values and the directions they correspond to
-    uint16_t vMin[] = {1660, 625, 120, 220, 330, 1045, 2860, 2300};  	// 5V = 4095, 0V = (50) 0
-    uint16_t vMax[] = {1700, 670, 160, 260, 380, 1080, 2890, 2355};
-    uint16_t windDeg[] = {360, 45, 90, 135, 180, 225, 270, 315};
-    //char* windDir[] = {"North","North East","East","South East","South","South West","West","North West"};
+    // digital voltage values and the directions they correspond to   /////   5V = 4095, 0V = (50) 0
+    uint16_t vMin[] =    {1660,   625,         120,   220,         330,    1045,        2860,  2300};
+    uint16_t vMax[] =    {1700,   670,         160,   260,         380,    1080,        2890,  2355};
+    uint16_t windDeg[] = {360,    45,          90,    135,         180,    225,         270,   315};
+    //char* windDir[] =  {"North","North East","East","South East","South","South West","West","North West"};
 
     // poll the ADC for its value, that value corresponds to a direction
+
+    uint32_t channel = ADC_CHANNEL_6;
+    ADC_ChannelConfTypeDef sConfig = {0};
+
+	MX_ADC_Init();
+
+	if (HAL_ADCEx_Calibration_Start(&hadc) != HAL_OK)
+	{
+      Error_Handler();
+	}
+
+	sConfig.Channel = channel;
+	sConfig.Rank = ADC_REGULAR_RANK_1;
+	sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+	if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+	{
+	  Error_Handler();
+	}
+
     HAL_ADC_Start(&hadc);
 	HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
+	HAL_ADC_Stop(&hadc);
+
 	raw = HAL_ADC_GetValue(&hadc);
+
+	HAL_ADC_DeInit(&hadc);
 
 	// check that direction
 	for(int i=0; i<=numDirs; i++) {
 		if(raw >= vMin[i] && raw <= vMax[i]) {
 			sensor_data->windDeg = windDeg[i];
+			sensor_data->raw = raw;
 			inIf = 1;
 			break;
 		}

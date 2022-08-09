@@ -51,7 +51,11 @@ Application/User/Core/sys_sensors.o: \
  c:\drivers\bsp\stm32wlxx_nucleo\stm32wlxx_nucleo.h \
  ../../Core/Inc/sys_conf.h ../../Core/Inc/sys_sensors.h \
  ../../Core/Inc/adc_if.h ../../Core/Inc/adc.h ../../Core/Inc/platform.h \
- ../../Core/Inc/i2c.h ../../Core/Inc/adc.h \
+ ../../Core/Inc/i2c.h ../../Core/Inc/adc.h ../../Core/Inc/sys_app.h \
+ ../../Core/Inc/sys_conf.h c:\utilities\trace\adv_trace\stm32_adv_trace.h \
+ ../../Core/Inc/utilities_conf.h \
+ c:\drivers\cmsis\include\cmsis_compiler.h c:\utilities\misc\stm32_mem.h \
+ c:\utilities\misc\stm32_tiny_vsnprintf.h ../../Core/Inc/utilities_def.h \
  C:/Users/dumbt/OneDrive/Desktop/Weather\ Station/BME680_driver-master/bme680.h \
  C:/Users/dumbt/OneDrive/Desktop/Weather\ Station/BME680_driver-master/bme680_defs.h
 ../../Core/Inc/platform.h:
@@ -110,5 +114,13 @@ c:\drivers\bsp\stm32wlxx_nucleo\stm32wlxx_nucleo.h:
 ../../Core/Inc/platform.h:
 ../../Core/Inc/i2c.h:
 ../../Core/Inc/adc.h:
+../../Core/Inc/sys_app.h:
+../../Core/Inc/sys_conf.h:
+c:\utilities\trace\adv_trace\stm32_adv_trace.h:
+../../Core/Inc/utilities_conf.h:
+c:\drivers\cmsis\include\cmsis_compiler.h:
+c:\utilities\misc\stm32_mem.h:
+c:\utilities\misc\stm32_tiny_vsnprintf.h:
+../../Core/Inc/utilities_def.h:
 C:/Users/dumbt/OneDrive/Desktop/Weather\ Station/BME680_driver-master/bme680.h:
 C:/Users/dumbt/OneDrive/Desktop/Weather\ Station/BME680_driver-master/bme680_defs.h:
