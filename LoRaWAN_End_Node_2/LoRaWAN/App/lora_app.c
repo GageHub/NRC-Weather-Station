@@ -614,6 +614,9 @@ static void SendTxData(void)
   uint16_t altitudeGps = 0;
 #endif /* CAYENNE_LPP */
 
+  //#####################################################################//
+
+  // sensing done here
   EnvSensors_Init();
   EnvSensors_Read(&sensor_data);
 
@@ -639,6 +642,7 @@ static void SendTxData(void)
 
   windTips = 0;
 
+  // data conversion for sending over LoRa
   EEDATA tmp;
   tmp.flt = (float)sensor_data.temperature/100;
   EEDATA rain;
@@ -648,6 +652,7 @@ static void SendTxData(void)
   EEDATA spd;
   spd.flt = avgWindSpeed;
 
+  // UART logging
   APP_LOG(TS_ON, VLEVEL_M, "VDDA: %d\r\n", batteryLevel);
   APP_LOG(TS_ON, VLEVEL_M, "temperature: %d deg C\r\n", (int16_t)(sensor_data.temperature));
   APP_LOG(TS_ON, VLEVEL_M, "humidity: %d rH \r\n", (int16_t)(sensor_data.humidity));
@@ -655,9 +660,7 @@ static void SendTxData(void)
   APP_LOG(TS_ON, VLEVEL_M, "rainfall since program start: %d mm \r\n", (int16_t)(rainFallInMM));
   APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind speed: %d km/h \r\n", (int16_t)(windTips));
   APP_LOG(TS_ON, VLEVEL_M, "avg wind speed: %d km/h \r\n", (int16_t)(avgWindSpeed));
-  APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %d deg \r\n", (sensor_data.windDeg));
   APP_LOG(TS_ON, VLEVEL_M, "instantaneous wind direction: %d deg \r\n", (int16_t)(sensor_data.windDeg));
-  APP_LOG(TS_ON, VLEVEL_M, "raw: %d \r\n", (sensor_data.raw));
 
   AppData.Port = LORAWAN_USER_APP_PORT;
 
@@ -678,6 +681,7 @@ static void SendTxData(void)
   AppData.BufferSize = CayenneLppGetSize();
 #else  /* not CAYENNE_LPP */
 
+  // defaults
   humidity    = (uint16_t)(sensor_data.humidity);
   temperature = (int16_t)(sensor_data.temperature);
   pressure = (uint16_t)(sensor_data.pressure);
@@ -749,8 +753,8 @@ static void SendTxData(void)
   // wind direction
   AppData.Buffer[i++] = (uint8_t)(64);
   AppData.Buffer[i++] = (uint8_t)(102);
-  AppData.Buffer[i++] = 0;//windDirection & 0xff;
-  AppData.Buffer[i++] = sensor_data.windDeg;//(windDirection >> 8) & 0xff;
+  AppData.Buffer[i++] = 0;
+  AppData.Buffer[i++] = sensor_data.windDeg;
 
   // wind speed
   AppData.Buffer[i++] = (uint8_t)(65);

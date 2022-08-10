@@ -47,9 +47,9 @@ extern "C" {
 /*#define CAYENNE_LPP*/
 
 /*!
- * Defines the application data transmission duty cycle. 10s, value in [ms].
+ * Defines the application data transmission duty cycle. 120s, value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            120000
+#define APP_TX_DUTYCYCLE                            120000 // 1 hour = 3600000   // 30 min = 1800000  // 2 min = 120000
 
 /*!
  * LoRaWAN User application port

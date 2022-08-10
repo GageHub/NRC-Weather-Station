@@ -187,6 +187,9 @@ int32_t EnvSensors_Read(sensor_t *sensor_data)
   TEMPERATURE_Value = (SYS_GetTemperatureLevel() >> 8);
 #endif  /* SENSOR_ENABLED */
 
+  //########################### Where data is taken #############################/
+
+  // defaults
   sensor_data->humidity    = HUMIDITY_Value;
   sensor_data->temperature = TEMPERATURE_Value;
   sensor_data->pressure    = PRESSURE_Value;
@@ -194,10 +197,13 @@ int32_t EnvSensors_Read(sensor_t *sensor_data)
   sensor_data->latitude  = (int32_t)((STSOP_LATTITUDE  * MAX_GPS_POS) / 90);
   sensor_data->longitude = (int32_t)((STSOP_LONGITUDE  * MAX_GPS_POS) / 180);
 
+  // actual sensing
   bme680TakeSample(sensor_data, i2c_reading_buf, bmes.result, data, bmes.min_period, bmes.gs);
   getWindDir(sensor_data);
 
   return 0;
+
+  //###############################################################################/
   /* USER CODE END EnvSensors_Read */
 }
 
@@ -465,9 +471,11 @@ void getWindDir(sensor_t *sensor_data) {
     int inIf = 0;
 
     // digital voltage values and the directions they correspond to   /////   5V = 4095, 0V = (50) 0
-    uint16_t vMin[] =    {1660,   625,         120,   220,         330,    1045,        2860,  2300};
-    uint16_t vMax[] =    {1700,   670,         160,   260,         380,    1080,        2890,  2355};
-    uint16_t windDeg[] = {360,    45,          90,    135,         180,    225,         270,   315};
+    // mid values =  {320,    1040,         2896,  2355,       1682,   615,         89,    184};
+
+    uint16_t vMin[] =    {270,    990,          2840,  2305,       1630,   560,         30,    134};
+    uint16_t vMax[] =    {370,    1090,         2940,  2405,       1730,   675,         130,   234};
+    uint16_t windDeg[] = {360,    45,           90,    135,        180,    225,         270,   315};
     //char* windDir[] =  {"North","North East","East","South East","South","South West","West","North West"};
 
     // poll the ADC for its value, that value corresponds to a direction
@@ -484,7 +492,7 @@ void getWindDir(sensor_t *sensor_data) {
 
 	sConfig.Channel = channel;
 	sConfig.Rank = ADC_REGULAR_RANK_1;
-	sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_39CYCLES_5;
 	if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 	{
 	  Error_Handler();
@@ -495,6 +503,7 @@ void getWindDir(sensor_t *sensor_data) {
 	HAL_ADC_Stop(&hadc);
 
 	raw = HAL_ADC_GetValue(&hadc);
+	sensor_data->raw = raw;
 
 	HAL_ADC_DeInit(&hadc);
 
@@ -502,7 +511,7 @@ void getWindDir(sensor_t *sensor_data) {
 	for(int i=0; i<=numDirs; i++) {
 		if(raw >= vMin[i] && raw <= vMax[i]) {
 			sensor_data->windDeg = windDeg[i];
-			sensor_data->raw = raw;
+
 			inIf = 1;
 			break;
 		}
