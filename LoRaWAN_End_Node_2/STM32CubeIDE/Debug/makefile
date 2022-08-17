@@ -61,6 +61,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 LoRaWAN_End_Node.list \
 
+OBJCOPY_BIN += \
+LoRaWAN_End_Node.bin \
+
 
 # All Target
 all: main-build
@@ -84,12 +87,17 @@ LoRaWAN_End_Node.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS
 	@echo 'Finished building: $@'
 	@echo ' '
 
+LoRaWAN_End_Node.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "LoRaWAN_End_Node.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) LoRaWAN_End_Node.elf LoRaWAN_End_Node.list LoRaWAN_End_Node.map default.size.stdout
+	-$(RM) LoRaWAN_End_Node.bin LoRaWAN_End_Node.elf LoRaWAN_End_Node.list LoRaWAN_End_Node.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
